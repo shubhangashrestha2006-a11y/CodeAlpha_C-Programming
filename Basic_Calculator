@@ -1,0 +1,124 @@
+#include <stdio.h>    // Standard input/output functions (printf, scanf)
+#include <math.h>     // Math functions (pow, sqrt)
+/*
+ * Main function - Entry point of the program
+ * Returns 0 on successful execution
+ */
+int main() {
+    char operator;      // Variable to store the operator (+, -, *, /, %, ^, s)
+    int number1, number2, result;  // Variables for numbers and result
+    char choice;        // Variable to store user's choice to continue or exit
+    
+    /*
+     * do-while loop to keep the calculator running until user chooses to exit
+     * This ensures the program runs at least once
+     */
+    do {
+        // Display the calculator header with box drawing characters
+        printf("╔══════════════════════════════════════╗\n");
+        printf("║        MODERN CALCULATOR             ║\n");
+        printf("╚══════════════════════════════════════╝\n");
+        
+        // Display available operations menu
+        printf("\nAvailable Operations:\n");
+        printf("+ : Addition\n");
+        printf("- : Subtraction\n");
+        printf("* : Multiplication\n");
+        printf("/ : Division\n");
+        printf("%% : Modulus (remainder after division)\n");
+        printf("^ : Exponentiation (first number raised to power of second number)\n");
+        printf("s : Square Root (calculated on first number only)\n");
+        printf("\n");
+        
+        // Get first number from user
+        printf("Enter first number: ");
+        scanf("%d", &number1);  // Read integer input and store in number1
+        
+        // Get operator from user
+        printf("Enter operator: ");
+        scanf(" %c", &operator);  // Note the space before %c to consume any leftover newline
+        
+        /*
+         * For square root operation, we don't need the second number
+         * For all other operations, we need to get the second number
+         */
+        if (operator != 's') {
+            printf("Enter second number: ");
+            scanf("%d", &number2);  // Read integer input and store in number2
+        }
+        
+        /*
+         * Switch statement to perform different operations based on the operator
+         * This is more efficient than multiple if-else statements
+         */
+        switch(operator) {
+            case '+':  // Addition
+                result = number1 + number2;
+                printf("\nResult: %d + %d = %d\n", number1, number2, result);
+                break;
+                
+            case '-':  // Subtraction
+                result = number1 - number2;
+                printf("\nResult: %d - %d = %d\n", number1, number2, result);
+                break;
+                
+            case '*':  // Multiplication
+                result = number1 * number2;
+                printf("\nResult: %d * %d = %d\n", number1, number2, result);
+                break;
+                
+            case '/':  // Division
+                // Check for division by zero to prevent runtime error
+                if(number2 != 0) {
+                    result = number1 / number2;  // Integer division
+                    printf("\nResult: %d / %d = %d\n", number1, number2, result);
+                } else {
+                    printf("\nError: Division by zero is not allowed!\n");
+                }
+                break;
+                
+            case '%':  // Modulus (remainder after division)
+                // Check for modulus by zero to prevent runtime error
+                if(number2 != 0) {
+                    result = number1 % number2;
+                    printf("\nResult: %d %% %d = %d\n", number1, number2, result);
+                } else {
+                    printf("\nError: Modulus by zero is not allowed!\n");
+                }
+                break;
+                
+            case '^':  // Exponentiation
+                // pow() returns double, so we cast to int for consistency
+                result = (int)pow(number1, number2);
+                printf("\nResult: %d ^ %d = %d\n", number1, number2, result);
+                break;
+                
+            case 's':  // Square Root
+                // Check for negative number to prevent mathematical error
+                if(number1 >= 0) {
+                    // sqrt() returns double, so we use %f format specifier
+                    double sqrt_result = sqrt(number1);
+                    printf("\nResult: √%d = %.2f\n", number1, sqrt_result);
+                } else {
+                    printf("\nError: Cannot calculate square root of a negative number!\n");
+                }
+                break;
+                
+            default:  // Handle invalid operators
+                printf("\nError: Invalid operator!\n");
+                printf("Please use one of: +, -, *, /, %%, ^, s\n");
+                break;
+        }
+        
+        // Ask user if they want to continue
+        printf("\nDo you want to perform another calculation? (y/n): ");
+        scanf(" %c", &choice);  // Note the space before %c
+        printf("\n");
+        
+    } while(choice == 'y' || choice == 'Y');  // Continue if user enters 'y' or 'Y'
+    
+    // Exit message
+    printf("Thank you for using the calculator!\n");
+    
+    return 0;  // Indicate successful program execution
+}
