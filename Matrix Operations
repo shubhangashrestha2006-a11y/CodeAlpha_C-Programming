@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <conio.h>  // Turbo C++ specific header for console functions
+#include <stdio.h> // Standard input/output functions (printf, scanf)
 
 #define MAX 10      // Maximum size for matrices
 
