@@ -1,0 +1,209 @@
+#include <stdio.h>
+#include <conio.h>  // Turbo C++ specific header for console functions
+
+#define MAX 10      // Maximum size for matrices
+
+// FUNCTION PROTOTYPES - Declarations before implementation
+void readMatrix(int matrix[MAX][MAX], int rows, int columns);
+void displayMatrix(int matrix[MAX][MAX], int rows, int columns);
+void matrixSum(int A[MAX][MAX], int B[MAX][MAX], int result[MAX][MAX], int rows, int columns);
+void matrixMultiply(int A[MAX][MAX], int B[MAX][MAX], int result[MAX][MAX], int rows1, int columns1, int columns2);
+void matrixTranspose(int matrix[MAX][MAX], int transpose[MAX][MAX], int rows, int columns);
+int isValidDimensions(int rows, int columns);
+
+// MAIN FUNCTION - Program entry point
+void main() {
+    // Variable declarations
+    int A[MAX][MAX], B[MAX][MAX], result[MAX][MAX];  // 2D arrays for matrices
+    int rows1, columns1, rows2, columns2;           // Dimensions of matrices
+    int choice;                                     // User's menu choice
+    
+    clrscr();  // Clear screen - Turbo C++ specific function
+    
+    // Program header
+    printf("╔══════════════════════════════════════╗\n");
+    printf("║        Matrix Operations Program     ║\n");
+    printf("╚══════════════════════════════════════╝\n");
+
+    // INPUT FOR MATRIX A
+    // Loop until valid dimensions are entered
+    do {
+        printf("Enter dimensions for matrix A (rows columns): ");
+        scanf("%d %d", &rows1, &columns1);
+    } while (!isValidDimensions(rows1, columns1));  // Validate dimensions
+    
+    printf("Enter elements for matrix A:\n");
+    readMatrix(A, rows1, columns1);  // Read matrix elements
+    
+    // INPUT FOR MATRIX B
+    do {
+        printf("Enter dimensions for matrix B (rows columns): ");
+        scanf("%d %d", &rows2, &columns2);
+    } while (!isValidDimensions(rows2, columns2));
+    
+    printf("Enter elements for matrix B:\n");
+    readMatrix(B, rows2, columns2);
+    
+    // MAIN MENU LOOP
+    do {
+        // Display menu options
+        printf("\n╔══════════════════════════════════════╗\n");
+        printf("║           Matrix Operations          ║\n");
+        printf("╠══════════════════════════════════════╣\n");
+        printf("║ 1. Matrix Addition                   ║\n");
+        printf("║ 2. Matrix Multiplication             ║\n");
+        printf("║ 3. Matrix Transpose                  ║\n");
+        printf("║ 4. Display Matrices                  ║\n");
+        printf("║ 5. Exit                              ║\n");
+        printf("╚══════════════════════════════════════╝\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        // SWITCH CASE for menu operations
+        switch(choice) {
+            case 1:  // MATRIX ADDITION
+                if (rows1 == rows2 && columns1 == columns2) {
+                    matrixSum(A, B, result, rows1, columns1);
+                    printf("\nMatrix A + Matrix B:\n");
+                    displayMatrix(result, rows1, columns1);
+                } else {
+                    printf("Error: Matrices must have same dimensions for addition!\n");
+                }
+                break;
+                
+            case 2:  // MATRIX MULTIPLICATION
+                if (columns1 == rows2) {  // Check if multiplication is possible
+                    matrixMultiply(A, B, result, rows1, columns1, columns2);
+                    printf("\nMatrix A × Matrix B:\n");
+                    displayMatrix(result, rows1, columns2);
+                } else {
+                    printf("Error: Number of columns in A must equal number of rows in B!\n");
+                }
+                break;
+                
+            case 3:  // MATRIX TRANSPOSE
+                printf("\nTranspose of Matrix A:\n");
+                matrixTranspose(A, result, rows1, columns1);
+                displayMatrix(result, columns1, rows1);  // Rows and columns swapped
+                
+                printf("\nTranspose of Matrix B:\n");
+                matrixTranspose(B, result, rows2, columns2);
+                displayMatrix(result, columns2, rows2);
+                break;
+                
+            case 4:  // DISPLAY MATRICES
+                printf("\nMatrix A:\n");
+                displayMatrix(A, rows1, columns1);
+                
+                printf("\nMatrix B:\n");
+                displayMatrix(B, rows2, columns2);
+                break;
+                
+            case 5:  // EXIT PROGRAM
+                printf("Exiting program...\n");
+                break;
+                
+            default:  // INVALID CHOICE
+                printf("Invalid choice! Please try again.\n");
+        }
+        
+        // PAUSE AND CLEAR SCREEN FOR NEXT OPERATION
+        if (choice != 5) {
+            printf("\nPress any key to continue...");
+            getch();   // Wait for key press
+            clrscr();  // Clear screen
+        }
+    } while (choice != 5);  // Loop until user chooses to exit
+    
+    getch();  // Wait before exiting program
+}
+
+// FUNCTION DEFINITIONS
+
+/**
+ * Reads matrix elements from user input
+ * @param matrix: 2D array to store elements
+ * @param rows: number of rows
+ * @param columns: number of columns
+ */
+void readMatrix(int matrix[MAX][MAX], int rows, int columns) {
+    int i, j;  // Loop variables (declared at start for Turbo C++)
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < columns; j++) {
+            printf("Enter element [%d][%d]: ", i, j);
+            scanf("%d", &matrix[i][j]);  // Read each element
+        }
+    }
+}
+
+/**
+ * Displays matrix in tabular format
+ * @param matrix: 2D array to display
+ * @param rows: number of rows
+ * @param columns: number of columns
+ */
+void displayMatrix(int matrix[MAX][MAX], int rows, int columns) {
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < columns; j++) {
+            printf("%d\t", matrix[i][j]);  // Tab-separated elements
+        }
+        printf("\n");  // New line after each row
+    }
+}
+
+/**
+ * Adds two matrices and stores result in third matrix
+ * Formula: result[i][j] = A[i][j] + B[i][j]
+ */
+void matrixSum(int A[MAX][MAX], int B[MAX][MAX], int result[MAX][MAX], int rows, int columns) {
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < columns; j++) {
+            result[i][j] = A[i][j] + B[i][j];  // Element-wise addition
+        }
+    }
+}
+
+/**
+ * Multiplies two matrices using triple nested loop
+ * Formula: result[i][j] = Σ(A[i][k] * B[k][j]) for k=0 to columns1-1
+ * Condition: columns of A must equal rows of B
+ */
+void matrixMultiply(int A[MAX][MAX], int B[MAX][MAX], int result[MAX][MAX], int rows1, int columns1, int columns2) {
+    int i, j, k;
+    for (i = 0; i < rows1; i++) {
+        for (j = 0; j < columns2; j++) {
+            result[i][j] = 0;  // Initialize result element
+            // Dot product of row i of A and column j of B
+            for (k = 0; k < columns1; k++) {
+                result[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+
+/**
+ * Finds transpose of a matrix (rows become columns, columns become rows)
+ * Formula: transpose[j][i] = matrix[i][j]
+ */
+void matrixTranspose(int matrix[MAX][MAX], int transpose[MAX][MAX], int rows, int columns) {
+    int i, j;
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < columns; j++) {
+            transpose[j][i] = matrix[i][j];  // Swap indices
+        }
+    }
+}
+
+/**
+ * Validates if matrix dimensions are within allowed range
+ * @return: 1 if valid, 0 if invalid
+ */
+int isValidDimensions(int rows, int columns) {
+    if (rows <= 0 || columns <= 0 || rows > MAX || columns > MAX) {
+        printf("Error: Dimensions must be between 1 and %d!\n", MAX);
+        return 0;  // Invalid dimensions
+    }
+    return 1;  // Valid dimensions
+}
